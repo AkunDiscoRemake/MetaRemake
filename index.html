@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#05070f" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<title>MetaPort · MR Runtime (fanmade)</title>
+<link rel="stylesheet" href="/src/styles/global.css" />
+<link rel="manifest" href="/manifest.webmanifest" />
+</head>
+<body>
+  <!-- WebGL canvases: one (mono) or two (SBS per-eye) -->
+  <div id="gl-root" aria-label="MetaPort mixed reality viewport"></div>
+
+  <!-- Projected DOM layer: real web pages / soft-keyboard inputs living on 3D panels -->
+  <div id="dom-layer"></div>
+
+  <!-- 2D compositor: vignette / eye-canvas mask / comfort tunnel -->
+  <svg id="mask-layer" viewBox="0 0 2 1" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <radialGradient id="eye-mask" cx="0.25" cy="0.5" r="0.42">
+        <stop offset="0.55" stop-color="#000" stop-opacity="0" />
+        <stop offset="1" stop-color="#000" stop-opacity="1" />
+      </radialGradient>
+      <radialGradient id="eye-mask-r" cx="0.75" cy="0.5" r="0.42">
+        <stop offset="0.55" stop-color="#000" stop-opacity="0" />
+        <stop offset="1" stop-color="#000" stop-opacity="1" />
+      </radialGradient>
+    </defs>
+    <rect width="2" height="1" fill="url(#eye-mask)" />
+    <rect width="2" height="1" fill="url(#eye-mask-r)" />
+  </svg>
+
+  <div id="vignette" aria-hidden="true"></div>
+  <div id="toast-host" role="status" aria-live="polite"></div>
+
+  <!-- Boot / safety shell. Real UI is drawn inside the 3D world, never as flat panels. -->
+  <div id="boot">
+    <div class="boot-inner">
+      <div class="boot-mark">
+        <span class="glyph"></span>
+        <div class="boot-title">
+          <strong>MetaPort</strong>
+          <em>MR runtime · VR&nbsp;Box · SBS · hand tracking</em>
+        </div>
+      </div>
+      <div class="boot-status" id="boot-status">iniciando núcleo…</div>
+      <div class="boot-bar"><i id="boot-progress"></i></div>
+      <div class="boot-actions">
+        <button id="boot-handheld" class="btn btn-primary">Entrar em Realidade Mista</button>
+        <button id="boot-vrbox" class="btn">Modo VR&nbsp;Box (SBS estéreo)</button>
+        <button id="boot-xr" class="btn" hidden>Iniciar WebXR nativo (Quest/Pico)</button>
+      </div>
+      <p class="boot-note">
+        MetaPort é um projeto <b>fanmade</b>, sem afiliação com Meta, Google ou Samsung.
+        Câmera e giroscópio só são usados depois do seu toque; nada sai do dispositivo.
+      </p>
+      <div id="boot-error" class="boot-error" hidden></div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

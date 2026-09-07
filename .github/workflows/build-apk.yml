@@ -1,0 +1,221 @@
+name: Build APK
+
+# Compila o bundle web (com assets offline do MediaPipe) e empacota o APK
+# Android no GitHub Actions. Rode manualmente ou empurre uma tag v* para gerar
+# uma release com o .apk anexado.
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Tipo de build'
+        type: choice
+        required: true
+        default: 'debug'
+        options: ['debug', 'release', 'both']
+      make_release:
+        description: 'Publicar como GitHub Release'
+        type: boolean
+        required: false
+        default: false
+      note:
+        description: 'Nota da release'
+        required: false
+        type: string
+        default: ''
+  push:
+    tags: ['v*']
+  pull_request:
+    branches: ['main']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apk-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE: 22
+  JAVA: 17
+
+jobs:
+  # ---------------------------------------------------------------- web bundle
+  web:
+    name: Bundle web (vite + assets)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE }}
+          cache: npm
+
+      - name: Instalar dependências
+        run: npm ci --no-audit --no-fund
+
+      - name: Lint
+        run: npx eslint . --max-warnings=200
+
+      - name: Smoke test headless (apps + API + contorno das mãos)
+        run: node scripts/smoke.mjs
+
+      - name: Baixar assets (MediaPipe WASM + modelo de mão)
+        run: node scripts/fetch-assets.mjs
+        env:
+          MEDIAPIPE_VERSION: 0.10.14
+
+      - name: Build
+        run: npx vite build
+
+      - name: Conferir bundle
+        run: |
+          set -e
+          test -s dist/index.html
+          ls -la dist
+          du -sh dist
+          node -e '
+          const fs=require("fs"), p=require("path");
+          const walk=(d)=>fs.readdirSync(d,{withFileTypes:true}).flatMap(e=>e.isDirectory()?walk(p.join(d,e.name)):[p.join(d,e.name)]);
+          const files=walk("dist");
+          const html=fs.readFileSync("dist/index.html","utf8");
+          if (/(src|href)="\//.test(html)) { console.error("✗ index.html aponta caminho absoluto — o WebViewAssetLoader não resolve"); process.exit(1); }
+          const need=["dist/wasm/vision_wasm_internal.wasm","dist/models/hand_landmarker.task"];
+          for (const n of need) console.log(fs.existsSync(n) ? "✓ " + n : "⚠ ausente (CDN em tempo de execução): " + n);
+          console.log("✓", files.length, "arquivos em dist/");
+          '
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: metaport-web-bundle
+          path: dist
+          retention-days: 14
+
+  # ------------------------------------------------------------------- APK
+  apk:
+    name: APK Android
+    needs: web
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        type: ${{ (github.event.inputs.build_type || 'debug') == 'both' && fromJSON('["debug","release"]') || fromJSON('["' + (github.event.inputs.build_type || 'debug') + '"]') }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: metaport-web-bundle
+          path: dist
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE }}
+
+      - name: Copiar bundle para assets do app
+        run: node scripts/sync-android.mjs
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA }}
+
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools platforms;android-34 build-tools;34.0.0'
+          accept-android-sdk-licenses: true
+
+      - name: Assinar release (se houver keystore)
+        if: matrix.type == 'release'
+        env:
+          KEYSTORE_B64: ${{ secrets.METAPORT_KEYSTORE_B64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.METAPORT_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.METAPORT_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.METAPORT_KEY_PASSWORD }}
+        run: |
+          set -e
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > android/metaport.jks
+            cat > android/keystore.properties <<EOF
+          storeFile=../metaport.jks
+          storePassword=$KEYSTORE_PASSWORD
+          keyAlias=$KEY_ALIAS
+          keyPassword=$KEY_PASSWORD
+          EOF
+            echo "✓ keystore personalizado"
+          else
+            echo "⚠ sem METAPORT_KEYSTORE_B64 — release assinada com a debug key (sideload funciona; Play Store não)"
+          fi
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+          cache-read-only: false
+
+      - name: Gradle wrapper
+        working-directory: android
+        run: gradle wrapper --gradle-version 8.7 --distribution-type bin
+
+      - name: assemble${{ matrix.type }}
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          VERSION="${GITHUB_REF_NAME#v}"
+          [ "$VERSION" = "$GITHUB_REF_NAME" ] && VERSION="1.0.0-dev"
+          ./gradlew --no-daemon --stacktrace assemble$(echo "${{ matrix.type }}" | sed 's/^./\U&/') \
+            -PVERSION_NAME="$VERSION" \
+            -PVERSION_CODE="${{ github.run_number }}"
+      - name: Coletar APK
+        id: apk
+        run: |
+          set -e
+          SRC="android/app/build/outputs/apk/${{ matrix.type }}/app-${{ matrix.type }}-unsigned.apk"
+          [ -f "$SRC" ] || SRC="android/app/build/outputs/apk/${{ matrix.type }}/app-${{ matrix.type }}.apk"
+          VER="${GITHUB_REF_NAME#v}"
+          case "$VER" in ''|*[!0-9.]*) VER="dev" ;; esac
+          NAME="MetaPort-${{ matrix.type }}-$VER.apk"
+          cp "$SRC" "$NAME"
+          echo "path=$NAME" >> "$GITHUB_OUTPUT"
+          ls -la "$NAME"
+          if command -v aapt >/dev/null 2>&1; then aapt dump badging "$NAME" | head -3 || true; fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MetaPort-APK-${{ matrix.type }}
+          path: ${{ steps.apk.outputs.path }}
+          retention-days: 30
+
+      - name: Publicar release
+        if: (startsWith(github.ref, 'refs/tags/v') || github.event.inputs.make_release == 'true') && success()
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: MetaPort ${{ github.ref_name }}
+          body_path: ${{ github.workspace }}/RELEASE_NOTES.md
+          files: ${{ steps.apk.outputs.path }}
+          generate_release_notes: true
+          fail_on_unmatched_files: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ------------------------------------------------------------ avisos finais
+  summary:
+    name: Resumo
+    needs: [web, apk]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Escrever resumo
+        run: |
+          {
+            echo "## MetaPort build"
+            echo
+            echo "| passo | resultado |"
+            echo "|---|---|"
+            echo "| bundle web | ${{ needs.web.result }} |"
+            echo "| APK | ${{ needs.apk.result }} |"
+            echo
+            echo "Instale o \`MetaPort-APK-debug/MetaPort-debug*.apk\` baixando o artefato deste run."
+            echo "Se o tipo for \`release\` sem keystore configurada, o APK vem assinado com a debug key."
+          } >> "$GITHUB_STEP_SUMMARY"

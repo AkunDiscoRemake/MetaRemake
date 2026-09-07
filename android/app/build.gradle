@@ -1,0 +1,77 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+// Optional release signing: drop keystore.properties + the .jks next to the android/ folder.
+// Without it, CI still produces an installable release APK signed with the debug key.
+def keystoreProps = new Properties()
+def keystorePropsFile = rootProject.file('keystore.properties')
+def hasKeystore = keystorePropsFile.exists()
+if (hasKeystore) {
+    keystorePropsFile.withInputStream { keystoreProps.load(it) }
+}
+
+android {
+    namespace 'com.metaport.fanmade'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'com.metaport.fanmade'
+        minSdk 26
+        targetSdk 34
+        versionCode (project.findProperty('VERSION_CODE') ?: '1') as Integer
+        versionName (project.findProperty('VERSION_NAME') ?: '1.0.0') as String
+    }
+
+    if (hasKeystore) {
+        signingConfigs {
+            release {
+                storeFile rootProject.file(keystoreProps['storeFile'])
+                storePassword keystoreProps['storePassword']
+                keyAlias keystoreProps['keyAlias']
+                keyPassword keystoreProps['keyPassword']
+            }
+        }
+    }
+
+    buildTypes {
+        debug {
+            versionNameSuffix '-debug'
+            manifestPlaceholders = [appLabel: 'MetaPort dev']
+        }
+        release {
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig hasKeystore ? signingConfigs.release : signingConfigs.debug
+            manifestPlaceholders = [appLabel: 'MetaPort (fanmade)']
+        }
+    }
+
+    // .task / .wasm must not be compressed: the WebView streams them from assets
+    androidResources {
+        noCompress 'wasm', 'task', 'js', 'mjs', 'json', 'css', 'html', 'svg', 'png', 'bin'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions { jvmTarget = '17' }
+
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
+    }
+
+    packaging {
+        resources.excludes += ['META-INF/*.kotlin_module', '**/kotlin/**']
+    }
+}
+
+dependencies {
+    implementation 'androidx.core:core-ktx:1.13.1'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'androidx.webkit:webkit:1.11.0'
+}

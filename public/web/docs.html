@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MetaPort API · referência</title>
+<style>
+  :root { --ink:#dff4ff; --ink2:#9fb8d0; --accent:#7ef9ff; --violet:#a67bff; --code:#0a1120; }
+  * { box-sizing:border-box }
+  body { margin:0; background:#070b16; color:var(--ink); font:15px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  header { position:sticky; top:0; z-index:3; display:flex; gap:14px; align-items:center; padding:12px 18px;
+    background:rgba(7,11,22,.92); backdrop-filter:blur(9px); border-bottom:1px solid rgba(150,205,255,.16) }
+  header b { letter-spacing:.5px } header a { color:var(--accent); text-decoration:none; font-size:13px }
+  #toc { margin-left:auto; display:flex; gap:8px; flex-wrap:wrap }
+  #toc a { padding:4px 9px; border-radius:99px; background:rgba(255,255,255,.06); font-size:12px }
+  main { max-width:900px; margin:0 auto; padding:26px 20px 90px }
+  h1 { font-size:30px; margin:.4em 0 } h2 { margin-top:2em; padding-top:12px; border-top:1px solid rgba(150,205,255,.16); font-size:22px }
+  h3 { font-size:16px; color:var(--accent); letter-spacing:.02em }
+  p code, li code { background:var(--code); padding:1.5px 5px; border-radius:6px; font:13px/1.4 ui-monospace,Menlo,Consolas,monospace; color:#c9f4ff }
+  pre { background:var(--code); border:1px solid rgba(150,205,255,.16); border-left:2px solid var(--accent);
+    border-radius:12px; padding:14px 15px; overflow:auto; font:12.6px/1.6 ui-monospace,Menlo,Consolas,monospace }
+  table { border-collapse:collapse; width:100%; font-size:13.5px; margin:.8em 0 }
+  th, td { text-align:left; padding:8px 10px; border-bottom:1px solid rgba(150,205,255,.14) }
+  th { color:var(--ink2); font-weight:650; font-size:12px; text-transform:uppercase; letter-spacing:.08em }
+  a { color:var(--accent) }
+  .empty { color:var(--ink2); font-style:italic }
+  #err { display:none; padding:14px; border:1px solid #ff6b8a; border-radius:12px; background:rgba(255,107,138,.08) }
+</style>
+</head>
+<body>
+<header>
+  <b>MetaPort API</b>
+  <a href="./start.html">← início</a>
+  <a href="./API.md">fonte (.md)</a>
+  <nav id="toc"></nav>
+</header>
+<main>
+  <div id="err"></div>
+  <article id="doc"><p class="empty">carregando <code>API.md</code>…</p></article>
+</main>
+<script>
+/* Minimarkdown suficiente para o nosso documento: código, títulos, tabelas, listas, ênfase. */
+const esc = (s) => s.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+function inline(s) {
+  return esc(s)
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>')
+    .replace(/(^|[^*])\*([^*\n]+)\*/g, '$1<i>$2</i>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_top">$1</a>');
+}
+function md(src) {
+  const out = []; const lines = src.split('\n'); const toc = [];
+  let i = 0;
+  while (i < lines.length) {
+    const l = lines[i];
+    if (/^```/.test(l)) {
+      const buf = []; i++;
+      while (i < lines.length && !/^```/.test(lines[i])) buf.push(lines[i++]);
+      i++; out.push('<pre>' + esc(buf.join('\n')) + '</pre>'); continue;
+    }
+    const h = /^(#{1,4})\s+(.*)$/.exec(l);
+    if (h) {
+      const lvl = h[1].length;
+      const id = h[2].toLowerCase().replace(/[^a-z0-9à-ú]+/gi, '-').replace(/^-|-$/, '');
+      if (lvl <= 2) { toc.push({ id, text: h[2] }); out.push('<h' + lvl + ' id="' + id + '">' + inline(h[2]) + '</h' + lvl + '>'); }
+      else out.push('<h' + lvl + ' id="' + id + '">' + inline(h[2]) + '</h' + lvl + '>');
+      i++; continue;
+    }
+    if (/^\|/.test(l)) {
+      const rows = [];
+      while (i < lines.length && /^\|/.test(lines[i])) { rows.push(lines[i++]); }
+      const cells = (r) => r.replace(/^\||\|$/g, '').split('|').map((c) => c.trim());
+      const head = cells(rows[0]);
+      const body = rows.slice(/^[\s|:-]+$/.test(rows[1] || '') ? 2 : 1);
+      out.push('<table><thead><tr>' + head.map((c) => '<th>' + inline(c) + '</th>').join('') + '</tr></thead><tbody>'
+        + body.map((r) => '<tr>' + cells(r).map((c) => '<td>' + inline(c) + '</td>').join('') + '</tr>').join('')
+        + '</tbody></table>');
+      continue;
+    }
+    if (/^\s*[-*]\s+/.test(l)) {
+      const items = [];
+      while (i < lines.length && /^\s*[-*]\s+/.test(lines[i])) items.push(inline(lines[i++].replace(/^\s*[-*]\s+/, '')));
+      out.push('<ul>' + items.map((x) => '<li>' + x + '</li>').join('') + '</ul>');
+      continue;
+    }
+    if (/^\s*(-{3,}|\*{3,})\s*$/.test(l)) { out.push('<hr style="border:0;border-top:1px solid rgba(150,205,255,.16);margin:22px 0">'); i++; continue; }
+    if (!l.trim()) { i++; continue; }
+    const para = [];
+    while (i < lines.length && lines[i].trim() && !/^(```|#{1,4}\s|\||\s*[-*]\s)/.test(lines[i])) para.push(lines[i++]);
+    out.push('<p>' + inline(para.join(' ')) + '</p>');
+  }
+  return { html: out.join('\n'), toc };
+}
+(async () => {
+  try {
+    const r = await fetch('./API.md', { cache: 'no-cache' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const { html, toc } = md(await r.text());
+    document.getElementById('doc').innerHTML = html;
+    document.getElementById('toc').innerHTML = toc.slice(0, 8)
+      .map((t) => '<a href="#' + t.id + '">' + t.text.replace(/^[\d.]+\s*/, '') + '</a>').join('');
+    document.title = 'MetaPort API · ' + (toc[0]?.text || 'referência');
+  } catch (e) {
+    const box = document.getElementById('err');
+    box.style.display = 'block';
+    box.innerHTML = '<b>Não consegui carregar <code>API.md</code>.</b><br>' + esc(String(e.message || e))
+      + '<br><br>Sirva o bundle por HTTP (dentro do MetaPort isto funciona offline). Enquanto isso: <a href="./API.md">abrir como texto</a>.';
+    document.getElementById('doc').innerHTML = '';
+  }
+})();
+</script>
+</body>
+</html>

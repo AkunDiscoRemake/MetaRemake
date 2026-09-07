@@ -1,0 +1,28 @@
+{
+  "name": "MetaPort (fanmade)",
+  "short_name": "MetaPort",
+  "description": "Realidade mista no navegador: VR Box side-by-side, hand tracking com contorno luminoso, loja de apps e API própria.",
+  "id": "metaport",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "any",
+  "background_color": "#05060d",
+  "theme_color": "#05060d",
+  "categories": [
+    "utilities",
+    "entertainment",
+    "productivity"
+  ],
+  "icons": [
+    {
+      "src": "./icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "permissions": [
+    "camera"
+  ]
+}
