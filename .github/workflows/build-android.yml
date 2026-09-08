@@ -72,3 +72,21 @@ jobs:
           path: '**/*.apk'
           if-no-files-found: warn
           retention-days: 14
+
+      - name: Publicar APK como Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          APK=$(find app/build/outputs/apk -name '*.apk' | head -1)
+          if [ -z "$APK" ]; then echo "APK nao encontrado"; exit 1; fi
+          echo "APK: $APK ($(du -h "$APK" | cut -f1))"
+          # Recria a release (apaga a anterior com o mesmo tag, se existir)
+          gh release delete v0.1.0 -y --cleanup-tag 2>/dev/null || true
+          gh release create v0.1.0 "$APK" \
+            --title "MetaRemake v0.1.0 — Cardboard VR (debug)" \
+            --notes "Build automatizado do GitHub Actions (branch arena/01a081ff-metaremake).
+
+Instalação: habilite a instalação de fontes desconhecidas e instale o APK em um celular Android 8.0+.
+Uso: coloque o celular em um headset Google Cardboard (landscape). Conceda as permissões solicitadas:
+câmera (MR / hand tracking), captura de tela (apps Android dentro do VR) e acessibilidade (interação com os apps)."
+
