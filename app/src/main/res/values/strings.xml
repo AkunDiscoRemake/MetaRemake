@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">MetaRemake</string>
+    <string name="accessibility_service_label">MetaRemake VR Bridge</string>
+    <string name="accessibility_service_description">Allows MetaRemake to present Android apps as surfaces inside the Cardboard VR environment and to forward your hand/controller input to them. It never modifies or injects code into other apps — it only uses the standard Android accessibility APIs you authorize.</string>
+
+    <string name="screen_capture_channel_name">VR Screen Capture</string>
+    <string name="screen_capture_notification_title">MetaRemake is capturing the screen</string>
+    <string name="screen_capture_notification_text">The captured frame is rendered as a surface inside the Cardboard environment.</string>
+
+    <string name="perm_camera_rationale">The camera is used for the Mixed Reality environment and for the hand tracking demo.</string>
+    <string name="perm_overlay_rationale">Overlay windows are used to host the VR control strip.</string>
+    <string name="perm_accessibility_hint">Enable the MetaRemake accessibility service to use Android apps inside VR.</string>
+</resources>

@@ -1,0 +1,10 @@
+// MetaRemake — root build file.
+//
+// Native Android (Kotlin) + JavaScript Cardboard VR runtime.
+// The VR experience logic lives in app/src/main/assets/js and is executed
+// inside an embedded JS runtime; Kotlin owns rendering, sensors, tracking,
+// input, accessibility, MediaProjection and window management.
+plugins {
+    id 'com.android.application' version '8.5.2' apply false
+    id 'org.jetbrains.kotlin.android' version '1.9.24' apply false
+}

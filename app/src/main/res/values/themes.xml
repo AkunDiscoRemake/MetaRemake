@@ -1,0 +1,16 @@
+<resources>
+    <!-- Fullscreen, immersive theme for the Cardboard host Activity.
+         The real UI is rendered by the GL stereo renderer; the window itself
+         is a plain black SurfaceView host. -->
+    <style name="Theme.MetaRemake" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@color/vr_black</item>
+        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+        <item name="android:colorAccent">@color/vr_accent</item>
+        <item name="android:statusBarColor">@color/vr_black</item>
+        <item name="android:navigationBarColor">@color/vr_black</item>
+        <item name="android:keepScreenOn">true</item>
+        <item name="android:windowDisablePreview">true</item>
+    </style>
+</resources>

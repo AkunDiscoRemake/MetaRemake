@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MetaRemake VR Runtime</title>
+</head>
+<body style="margin:0; background:#000;">
+  <!--
+    MetaRemake JavaScript VR runtime.
+    This WebView never draws a visible page: it is the VR "brain" that drives
+    the scene graph, interaction and state. The Kotlin side renders the stereo
+    output and supplies tracking/input/Android capabilities through the
+    `NativeBridge` interface. Scripts are loaded in dependency order and attach
+    modules to the shared `window.VR` namespace.
+  -->
+  <script src="vr/namespace.js"></script>
+  <script src="vr/config.js"></script>
+  <script src="vr/scene.js"></script>
+  <script src="tracking/head-pose.js"></script>
+  <script src="tracking/hand-state.js"></script>
+  <script src="input/input-system.js"></script>
+  <script src="input/pointer.js"></script>
+  <script src="input/gestures.js"></script>
+  <script src="ui/widgets.js"></script>
+  <script src="ui/keyboard.js"></script>
+  <script src="ui/menus.js"></script>
+  <script src="apps/app-launcher.js"></script>
+  <script src="browser/browser.js"></script>
+  <script src="mr/mr.js"></script>
+  <script src="experiences/experiences.js"></script>
+  <script src="vr/loop.js"></script>
+  <script src="vr/entry.js"></script>
+</body>
+</html>
