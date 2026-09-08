@@ -85,3 +85,22 @@ jobs:
             --title "MetaRemake v0.1.0 - Cardboard VR (debug)" \
             --notes "Build automatizado do GitHub Actions (branch arena/01a081ff-metaremake). Instale em um celular Android 8.0+ e use com um headset Google Cardboard (landscape). Conceda as permissoes solicitadas: camera (MR / hand tracking), captura de tela (apps Android dentro do VR) e acessibilidade (interacao com os apps)."
 
+      - name: Publicar APK em branch de artefatos (apk)
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          APK=$(find app/build/outputs/apk -name '*.apk' | head -1)
+          [ -n "$APK" ] || { echo "APK nao encontrado"; exit 1; }
+          APK_ABS="$(pwd)/$APK"
+          TMP=$(mktemp -d)
+          cd "$TMP"
+          git init -q
+          git config user.name "ci-bot"
+          git config user.email "ci-bot@users.noreply.github.com"
+          git remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git checkout -q --orphan apk
+          cp "$APK_ABS" app-debug.apk
+          git add app-debug.apk
+          git commit -q -m "APK debug (build automatizado)"
+          git push -f origin apk
+
