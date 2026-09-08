@@ -90,7 +90,7 @@ class MainActivity : AppCompatActivity(), NativeBridge.Host {
 
         setupWebView()
 
-        glView.setOnTouchListener { _, ev -> onTouchEvent(ev) }
+        glView.setOnTouchListener { _, ev -> handleTouch(ev) }
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -202,7 +202,7 @@ class MainActivity : AppCompatActivity(), NativeBridge.Host {
     private var touchMoved = 0f
     private var lastTapTime = 0L
 
-    private fun onTouchEvent(ev: MotionEvent): Boolean {
+    private fun handleTouch(ev: MotionEvent): Boolean {
         val x = ev.x / glView.width.coerceAtLeast(1)
         val y = ev.y / glView.height.coerceAtLeast(1)
         when (ev.actionMasked) {

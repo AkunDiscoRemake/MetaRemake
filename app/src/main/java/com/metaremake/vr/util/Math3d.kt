@@ -12,7 +12,7 @@ import kotlin.math.sqrt
  */
 object Math3d {
 
-    const val PI = Math.PI.toFloat()
+    val PI = Math.PI.toFloat()
 
     /** Quaternion multiply: out = q * r (Hamilton product). */
     fun quatMultiply(q: FloatArray, r: FloatArray, out: FloatArray) {
