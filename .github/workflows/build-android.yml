@@ -1,0 +1,51 @@
+name: Build Android (MetaRemake)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ['arena/01a081ff-metaremake']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: assembleDebug
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools platforms;android-34 build-tools;34.0.0'
+          accept-android-sdk-licenses: true
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Validate wrapper
+        run: ./gradlew --version
+
+      - name: assembleDebug
+        run: ./gradlew --no-daemon --stacktrace assembleDebug
+
+      - name: List APKs
+        run: |
+          set -e
+          find . -name '*.apk' -not -path './.gradle/*' -print
+          ls -la app/build/outputs/apk/debug/ 2>/dev/null || true
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MetaRemake-APK-debug
+          path: '**/*.apk'
+          if-no-files-found: warn
+          retention-days: 14
