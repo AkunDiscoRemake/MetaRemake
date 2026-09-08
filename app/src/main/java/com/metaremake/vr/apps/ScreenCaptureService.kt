@@ -25,7 +25,7 @@ class ScreenCaptureService : Service() {
     override fun onCreate() {
         super.onCreate()
         val manager = getSystemService(NotificationManager::class.java)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && manager != null) {
             val channel = NotificationChannel(CHANNEL_ID, getString(R.string.screen_capture_channel_name), NotificationManager.IMPORTANCE_LOW)
             manager.createNotificationChannel(channel)
         }

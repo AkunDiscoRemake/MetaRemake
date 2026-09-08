@@ -82,15 +82,31 @@ tasks.register('downloadHandLandmarker') {
             }
         }
 
-        // 2) Download if still missing.
+        // 2) Download if still missing (with a few retries for CI robustness).
         if (!handModel.exists()) {
             def url = 'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task'
             println "Downloading Hand Landmarker model from ${url}"
-            def conn = new URL(url).openConnection()
-            conn.setConnectTimeout(30000)
-            conn.setReadTimeout(120000)
-            conn.inputStream.withStream { input ->
-                handModel.withOutputStream { output -> output << input }
+            def attempts = 3
+            def ok = false
+            for (int attempt = 1; attempt <= attempts && !ok; attempt++) {
+                try {
+                    def conn = new URL(url).openConnection()
+                    conn.setConnectTimeout(30000)
+                    conn.setReadTimeout(180000)
+                    conn.inputStream.withStream { input ->
+                        handModel.withOutputStream { output -> output << input }
+                    }
+                    ok = handModel.length() > 0
+                    if (!ok) { handModel.delete() }
+                } catch (Throwable t) {
+                    println "Download attempt ${attempt}/${attempts} failed: ${t.message}"
+                    handModel.delete()
+                    if (attempt < attempts) Thread.sleep(5000)
+                }
+            }
+            if (!ok) {
+                throw new GradleException("Could not download hand_landmarker.task after ${attempts} attempts. " +
+                        "Drop the official model into assets/ml/hand_landmarker.task and retry.")
             }
             println "Saved ${handModel.absolutePath}"
         }
