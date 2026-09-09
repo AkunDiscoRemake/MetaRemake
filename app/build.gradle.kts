@@ -1,3 +1,5 @@
+import java.net.URL
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -81,7 +83,9 @@ tasks.register("downloadHandModel") {
     doLast {
         target.parentFile.mkdirs()
         try {
-            java.net.URL(handModelUrl).openStream().use { input ->
+            // NOTE: `java` is shadowed by the Java plugin extension inside Gradle Kotlin
+            // DSL scripts, so the URL class is imported at the top of this file instead.
+            URL(handModelUrl).openStream().use { input ->
                 target.outputStream().use { output -> input.copyTo(output) }
             }
             logger.lifecycle("Hand Landmarker model downloaded (${target.length() / 1024} KB)")
