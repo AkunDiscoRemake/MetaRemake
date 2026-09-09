@@ -14,7 +14,7 @@ import org.json.JSONObject
  * It runs in an off screen WebView: zero extra dependencies, and the same engine that
  * powers the VR browser.
  */
-class JsRuntime(context: Context) {
+class JsRuntime(private val context: Context) {
 
     private val handler = Handler(Looper.getMainLooper())
     private var webView: WebView? = null

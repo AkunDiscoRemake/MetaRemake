@@ -4,6 +4,7 @@ import android.content.ContentUris
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.SurfaceTexture
+import android.opengl.GLES20
 import android.media.MediaMetadataRetriever
 import android.media.MediaPlayer
 import android.os.Build

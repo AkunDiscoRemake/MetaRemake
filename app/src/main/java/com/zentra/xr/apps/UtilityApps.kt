@@ -3,7 +3,7 @@ package com.zentra.xr.apps
 import android.opengl.Matrix
 import com.zentra.xr.BuildConfig
 import com.zentra.xr.core.Geometry
-import com.zentra.xr.core.Material
+import com.zentra.xr.xr.Material
 import com.zentra.xr.core.Mesh
 import com.zentra.xr.core.MeshBuilder
 import com.zentra.xr.core.Texture

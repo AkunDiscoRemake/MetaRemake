@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import com.google.mediapipe.framework.image.BitmapImageBuilder
 import com.google.mediapipe.tasks.core.BaseOptions
+import com.google.mediapipe.tasks.core.Delegate
 import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.google.mediapipe.tasks.components.containers.NormalizedLandmark
 import com.google.mediapipe.tasks.vision.handlandmarker.HandLandmarker
@@ -114,7 +115,7 @@ class HandTracker(
                 landmarker?.close()
                 val baseOptions = BaseOptions.builder()
                     .setModelAssetPath(modelPath)
-                    .setDelegate(BaseOptions.Delegate.GPU)
+                    .setDelegate(Delegate.GPU)
                     .build()
                 val options = HandLandmarker.HandLandmarkerOptions.builder()
                     .setBaseOptions(baseOptions)

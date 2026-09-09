@@ -348,7 +348,7 @@ class BrowserApp(engine: Engine, initialUrl: String? = null) : XrApp(engine) {
     /** The web page surface: forwards Direct Touch to the WebView. */
     private inner class WebSurface : Panel3D(ctx, contentWidth, 0.34f) {
 
-        private val local = Vec3()
+        private val touchPoint = Vec3()
         private var dragging = false
         private var downU = 0f
         private var downV = 0f
@@ -364,10 +364,10 @@ class BrowserApp(engine: Engine, initialUrl: String? = null) : XrApp(engine) {
             fillTop = 0xFFFFFFFF.toInt()
             fillBottom = 0xFFFFFFFF.toInt()
             val tip = engine.touch.tip
-            if (engine.touch.tracking && localPoint(tip, local)) {
-                val u = (local.x / size.x + 0.5f).coerceIn(0f, 1f)
-                val v = (0.5f - local.y / size.y).coerceIn(0f, 1f)
-                val touching = local.z < 0.024f && local.z > -0.12f
+            if (engine.touch.tracking && localPoint(tip, touchPoint)) {
+                val u = (touchPoint.x / size.x + 0.5f).coerceIn(0f, 1f)
+                val v = (0.5f - touchPoint.y / size.y).coerceIn(0f, 1f)
+                val touching = touchPoint.z < 0.024f && touchPoint.z > -0.12f
                 if (touching && !dragging) {
                     dragging = true
                     moved = false

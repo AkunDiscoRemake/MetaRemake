@@ -291,9 +291,9 @@ object Mathf {
 
     fun easeInOutCubic(t: Float): Float {
         val x = clamp01(t)
-        return if (x < 0.5f) 4f * x * x * x else 1f - pow(-2f * x + 2f, 3f) / 2f
+        val t = -2f * x + 2f
+        return if (x < 0.5f) 4f * x * x * x else 1f - (t * t * t) / 2f
     }
 
-    private fun pow(v: Float, p: Float): Float = kotlin.math.pow(v.toDouble(), p.toDouble()).toFloat()
-    fun abs(v: Float): Float = abs(v)
+    fun abs(v: Float): Float = kotlin.math.abs(v)
 }

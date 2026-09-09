@@ -3,7 +3,7 @@ package com.zentra.xr.games
 import android.opengl.Matrix
 import com.zentra.xr.apps.XrApp
 import com.zentra.xr.core.Geometry
-import com.zentra.xr.core.Material
+import com.zentra.xr.xr.Material
 import com.zentra.xr.core.Vec3
 import com.zentra.xr.ui.Button3D
 import com.zentra.xr.ui.Icon
