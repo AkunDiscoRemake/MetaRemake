@@ -98,15 +98,20 @@ class MainActivity : ComponentActivity(), EngineHost {
         engine.start()
 
         val needsOnboarding = !engine.settings.onboardingDone
-        if (needsOnboarding) {
-            // the camera dialog must be readable: it is requested from the VR onboarding,
-            // which only advances after the user taps "Permitir"
-            hideSplash()
-            engine.setOnboarding(OnboardingScreen(engine))
+        // The Android permission dialogs are plain 2D: ask for everything while the flat
+        // splash screen is still on top of the GL surface, so the user can actually read
+        // them. Only after that do we drop into the stereoscopic UI.
+        val perms = if (needsOnboarding || engine.settings.handTracking) {
+            requiredPermissions + Manifest.permission.CAMERA
         } else {
-            ensurePermissions {
-                hideSplash()
-                if (engine.settings.handTracking) engine.startHandTracking()
+            requiredPermissions
+        }
+        ensurePermissions(perms) {
+            hideSplash()
+            if (needsOnboarding) {
+                engine.setOnboarding(OnboardingScreen(engine))
+            } else if (engine.settings.handTracking) {
+                engine.startHandTracking()
             }
         }
     }
@@ -134,8 +139,8 @@ class MainActivity : ComponentActivity(), EngineHost {
 
     private var mediaCallback: (() -> Unit)? = null
 
-    private fun ensurePermissions(onDone: () -> Unit) {
-        val missing = requiredPermissions.filter {
+    private fun ensurePermissions(perms: Array<String>, onDone: () -> Unit) {
+        val missing = perms.filter {
             ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
         }
         if (missing.isEmpty()) {

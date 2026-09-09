@@ -102,8 +102,7 @@ class OnboardingScreen(engine: Engine) : Screen(engine) {
             Step.DIRECT_TOUCH -> step = Step.DONE
             Step.DONE -> {
                 engine.settings.onboardingDone = true
-                closing = true
-                onExit()
+                closeAndRelease()
             }
         }
         stepTime = 0f

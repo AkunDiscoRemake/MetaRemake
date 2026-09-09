@@ -110,6 +110,10 @@ Instalar modelo de mãos**.
 4. Para interagir: **aponte o dedo indicador para o elemento e toque** (empurre
    levemente a mão em direção à superfície). Sem câmera ou permissão, o ponteiro de
    olhar com dwell é ativado automaticamente.
+   > O hand tracking usa a **câmera traseira** (ela fica voltada para frente, na
+   > direção das suas mãos): o VR Box precisa deixar a lente livre pela janela
+   > frontal. Se o seu óculos cobre a câmera, desative o hand tracking em
+   > Settings → Tracking e use o ponteiro de olhar.
 5. Calibre a qualquer momento pelo botão de recentrar na barra de status.
 
 ---
@@ -119,3 +123,20 @@ Instalar modelo de mãos**.
 OpenXR, 6DoF, SLAM, tracking espacial/posicional, passthrough, MR por câmera,
 execução ou instalação de APKs externos e launchers de apps Android. Nada disso é
 necessário — e nada disso é implementado — para a experiência Zentra XR.
+
+---
+
+## Build e APK
+
+O build roda no **GitHub Actions** (`.github/workflows/build.yml`) a cada push:
+
+```bash
+gradle :app:assembleDebug :app:assembleRelease --no-daemon --stacktrace
+```
+
+- Artefatos: **`ZentraXR-debug`** e **`ZentraXR-release`** (o release é assinado com a
+  chave de debug para poder ser instalado direto; troque o `signingConfig` para loja).
+- O log completo de cada build é publicado no branch **`build-out`**
+  (`gradle-build.log` + os APKs gerados), útil para depurar sem abrir o Actions.
+- Requisitos: JDK 17 + Android SDK 35 (instalados pelo workflow).
+

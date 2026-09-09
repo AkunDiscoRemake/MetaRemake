@@ -179,21 +179,28 @@ class Engine(
     }
 
     fun openOverlay(screen: Screen) {
-        overlay?.let { it.closing = true }
+        overlay?.closing = true
+        // a screen that was queued but never became visible still owns resources
+        pendingOverlay?.closeAndRelease()
         pendingOverlay = screen
         screen.onEnter()
     }
 
     fun closeOverlay() {
-        overlay?.let {
-            it.closing = true
-            it.onExit()
-        }
+        overlay?.closeAndRelease()
     }
 
     fun setOnboarding(screen: Screen?) {
+        onboarding?.closeAndRelease()
         onboarding = screen
         screen?.onEnter()
+    }
+
+    /** Drops finished screens, releasing their resources exactly once. */
+    private fun reap(screen: Screen?) {
+        val s = screen ?: return
+        if (!s.finished) return
+        s.closeAndRelease()
     }
 
     fun back(): Boolean {
@@ -245,6 +252,9 @@ class Engine(
         perf.beginFrame(now)
         time += dt
         frameCount++
+        // the display can rotate (landscape <-> reverse landscape) without recreating
+        // the activity, so the sensor alignment is refreshed periodically
+        if (frameCount % 60L == 0L) head.refreshDisplayRotation()
 
         theme.setMode(settings.lightTheme)
         theme.update(dt)
@@ -277,8 +287,10 @@ class Engine(
             overlay = pendingOverlay
             pendingOverlay = null
         }
-        overlay?.let { if (it.finished) overlay = null }
-        onboarding?.let { if (it.finished) onboarding = null }
+        reap(overlay)
+        reap(onboarding)
+        if (overlay?.finished == true) overlay = null
+        if (onboarding?.finished == true) onboarding = null
 
         val dimTarget = if (active != null && active.dimsHub) 0.35f else 1f
         hubDim += (dimTarget - hubDim) * (1f - max(0f, 1f - dt / 0.2f))

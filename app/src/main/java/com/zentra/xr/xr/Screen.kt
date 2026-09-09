@@ -19,6 +19,9 @@ abstract class Screen(protected val engine: Engine) {
     var closing = false
     var finished = false
 
+    /** Guarantees [onExit] runs exactly once, whoever closes the screen. */
+    var exited = false
+
     /** When true the hub behind this screen is dimmed and made non interactive. */
     open val dimsHub: Boolean = true
 
@@ -27,6 +30,15 @@ abstract class Screen(protected val engine: Engine) {
 
     open fun onEnter() {}
     open fun onExit() {}
+
+    /** Marks the screen as leaving and releases its resources exactly once. */
+    fun closeAndRelease() {
+        closing = true
+        if (!exited) {
+            exited = true
+            onExit()
+        }
+    }
 
     open fun update(dt: Float) {
         transition += ((if (closing) 0f else 1f) - transition) *
