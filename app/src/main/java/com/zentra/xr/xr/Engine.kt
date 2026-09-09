@@ -85,6 +85,7 @@ class Engine(
     private var lastFrameMs = 0L
     private var choreographer: Choreographer? = null
     private var surfaceReady = false
+    private var running = false
     private var pendingOverlay: Screen? = null
     private var hubDim = 0f
 
@@ -108,6 +109,7 @@ class Engine(
     }
 
     fun start() {
+        running = true
         head.start()
         theme.setMode(settings.lightTheme, instant = true)
         ui.theme = theme.current
@@ -121,6 +123,7 @@ class Engine(
     }
 
     fun resume() {
+        running = true
         head.start()
         choreographer?.postFrameCallback(this)
         if (settings.handTracking && host.hasCameraPermission() && model.isReady()) {
@@ -129,12 +132,14 @@ class Engine(
     }
 
     fun pause() {
+        running = false
         head.stop()
         hands.stop()
         choreographer?.removeFrameCallback(this)
     }
 
     fun destroy() {
+        running = false
         pause()
         js.release()
         hands.release()
@@ -228,7 +233,9 @@ class Engine(
     var glViewRequest: (() -> Unit)? = null
 
     private fun frame() {
-        if (!surfaceReady) return
+        // The GL thread can start drawing before Engine.start() ran on the UI thread;
+        // nothing is initialised yet, so skip the frame instead of crashing.
+        if (!surfaceReady || !running || !::hub.isInitialized) return
         val now = System.nanoTime()
         val dt = if (lastNs == 0L) 0.016f else ((now - lastNs) / 1e9f).coerceIn(0.0005f, 0.1f)
         lastNs = now

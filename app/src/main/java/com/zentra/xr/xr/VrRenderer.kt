@@ -219,7 +219,9 @@ class VrRenderer {
      * @param fovDeg horizontal field of view of a single eye
      */
     fun beginEye(index: Int, ipd: Float, fovDeg: Float, mono: Boolean, swap: Boolean) {
-        eyeIndex = if (swap) 1 - index else index
+        // In mono mode there is a single viewport that covers the whole framebuffer,
+        // so swapping the eyes must not move it to the (empty) right half.
+        eyeIndex = if (mono) 0 else if (swap) 1 - index else index
         val eyeOffset = if (mono) 0f else (if (index == 0) -ipd * 0.5f else ipd * 0.5f)
 
         val fw = fbo.width

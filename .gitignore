@@ -12,3 +12,4 @@ local.properties
 /app/release
 # MediaPipe model is downloaded at build time (see app/build.gradle.kts)
 /app/src/main/assets/models/*.task
+/apk/

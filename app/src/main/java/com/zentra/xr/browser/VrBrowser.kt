@@ -71,8 +71,13 @@ class VrBrowser(
     val texture = Texture()
 
     private var webView: WebView? = null
-    private var back: Bitmap? = null
-    private var front: Bitmap? = null
+    // Triple buffering: the UI thread draws into `bufs[drawIndex]`, the GL thread
+    // uploads `bufs[heldIndex]` and `readyIndex` is the last completed frame. With only
+    // two buffers the GPU could read a bitmap while it was being drawn into.
+    private val bufs = arrayOfNulls<Bitmap>(3)
+    private var drawIndex = 0
+    private var readyIndex = -1
+    private var heldIndex = -1
     private val lock = Any()
 
     @Volatile
@@ -150,8 +155,12 @@ class VrBrowser(
 
             host.addView(view)
             webView = view
-            back = Bitmap.createBitmap(WIDTH, HEIGHT, Bitmap.Config.ARGB_8888)
-            front = Bitmap.createBitmap(WIDTH, HEIGHT, Bitmap.Config.ARGB_8888)
+            for (i in bufs.indices) {
+                bufs[i] = Bitmap.createBitmap(WIDTH, HEIGHT, Bitmap.Config.ARGB_8888)
+            }
+            drawIndex = 0
+            readyIndex = -1
+            heldIndex = -1
         }
     }
 
@@ -266,9 +275,9 @@ class VrBrowser(
 
     private fun requestRedraw() {
         mainHandler.post {
-            val view = webView
-            val target = back
-            if (view == null || target == null) return@post
+            val view = webView ?: return@post
+            val idx = synchronized(lock) { drawIndex }
+            val target = bufs[idx] ?: return@post
             val canvas = Canvas(target)
             canvas.drawColor(if (settings.lightTheme) Color.WHITE else Color.BLACK)
             try {
@@ -277,10 +286,9 @@ class VrBrowser(
                 // ignore transient drawing failures
             }
             synchronized(lock) {
-                val tmp = front
-                front = target
-                back = tmp
+                readyIndex = idx
                 dirty = true
+                drawIndex = bufs.indices.firstOrNull { it != idx && it != heldIndex } ?: idx
             }
         }
     }
@@ -289,9 +297,10 @@ class VrBrowser(
     fun upload() {
         val bitmap: Bitmap?
         synchronized(lock) {
-            if (!dirty) return
+            if (!dirty || readyIndex < 0) return
             dirty = false
-            bitmap = front
+            heldIndex = readyIndex
+            bitmap = bufs[heldIndex]
         }
         bitmap?.let {
             if (texture.id == 0) texture.createFrom(it) else texture.upload(it)
@@ -301,7 +310,7 @@ class VrBrowser(
     private fun checkBlankAndFallback() {
         if (softwareFallback) return
         mainHandler.postDelayed({
-            val bitmap = front ?: return@postDelayed
+            val bitmap = synchronized(lock) { bufs[heldIndex] } ?: return@postDelayed
             var opaque = 0
             val step = 32
             for (y in 0 until HEIGHT step step) {

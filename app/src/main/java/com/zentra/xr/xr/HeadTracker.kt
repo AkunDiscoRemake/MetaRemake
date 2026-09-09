@@ -115,7 +115,9 @@ class HeadTracker(private val context: Context) : SensorEventListener {
         val yaw = atan2(forwardX.toDouble(), -forwardZ.toDouble())
         val deg = Math.toDegrees(yaw).toFloat()
         Matrix.setIdentityM(calibMatrix, 0)
-        Matrix.rotateM(calibMatrix, 0, -deg, 0f, 1f, 0f)
+        // yaw was measured CCW around Y, so rotating the world by +deg brings the
+        // current look direction back onto -Z (verified for yaw 0/+-90/180).
+        Matrix.rotateM(calibMatrix, 0, deg, 0f, 1f, 0f)
         applyCalibration()
     }
 
