@@ -64,7 +64,11 @@ void main() {
  * interface stays perfectly crisp at any distance and any resolution.
  */
 class PanelProgram : Program(VS_QUAD, """
+#ifdef GL_FRAGMENT_PRECISION_HIGH
 precision highp float;
+#else
+precision mediump float;
+#endif
 varying vec2 vUv;
 varying vec3 vWorld;
 

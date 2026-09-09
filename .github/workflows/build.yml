@@ -12,6 +12,8 @@ jobs:
     name: Assemble APK
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout
@@ -58,22 +60,48 @@ jobs:
           restore-keys: ${{ runner.os }}-gradle-
 
       - name: Assemble Debug + Release
+        id: assemble
         shell: bash
-        run: gradle :app:assembleDebug :app:assembleRelease --no-daemon --stacktrace
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          gradle :app:assembleDebug :app:assembleRelease --no-daemon --stacktrace 2>&1 | tee gradle-build.log
+
+      - name: Publish build log and APKs to the build-out branch
+        shell: bash
+        run: |
+          set -e
+          mkdir -p /tmp/build-out
+          cp gradle-build.log /tmp/build-out/ 2>/dev/null || true
+          mkdir -p /tmp/build-out/apk
+          cp app/build/outputs/apk/debug/*.apk /tmp/build-out/apk/ 2>/dev/null || true
+          cp app/build/outputs/apk/release/*.apk /tmp/build-out/apk/ 2>/dev/null || true
+          ls -la /tmp/build-out /tmp/build-out/apk > /tmp/build-out/listing.txt 2>&1 || true
+          cd /tmp/build-out
+          git init -q
+          git checkout -q -b build-out
+          git add -A
+          git -c user.name="ci" -c user.email="ci@github.com" commit -q -m "build ${GITHUB_RUN_NUMBER} (${GITHUB_SHA::7})" || echo "nothing to commit"
+          git push -q --force https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git build-out
+
+      - name: Fail on compile error
+        if: steps.assemble.outcome == 'failure'
+        shell: bash
+        run: exit 1
 
       - name: Upload Debug APK
         uses: actions/upload-artifact@v4
         with:
           name: ZentraXR-debug
           path: app/build/outputs/apk/debug/*.apk
-          if-no-files-found: error
+          if-no-files-found: warn
 
       - name: Upload Release APK
         uses: actions/upload-artifact@v4
         with:
           name: ZentraXR-release
           path: app/build/outputs/apk/release/*.apk
-          if-no-files-found: error
+          if-no-files-found: warn
 
       - name: Publish release
         if: startsWith(github.ref, 'refs/tags/v')

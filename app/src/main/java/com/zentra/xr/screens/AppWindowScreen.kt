@@ -99,6 +99,7 @@ class AppWindowScreen(engine: Engine, val app: XrApp) : Screen(engine) {
         closeButton.pos.set(width * 0.5f - 0.038f, height * 0.5f - 0.038f, 0f)
         closeButton.baseZ = 0f
 
+        frame.update(dt)
         frame.updateWorld(windowMatrix)
         app.update(dt)
     }

@@ -53,7 +53,7 @@ class BrowserApp(engine: Engine, initialUrl: String? = null) : XrApp(engine) {
     private var shift = false
     private val historyCards = ArrayList<Button3D>()
     private var statusTimer = 0f
-    private val identityRoot = FloatArray(16).apply { android.opengl.Matrix.setIdentityM(this, 0) }
+    private val parentMatrix = FloatArray(16).apply { android.opengl.Matrix.setIdentityM(this, 0) }
 
     private val rows = arrayOf(
         "qwertyuiop",
@@ -222,7 +222,7 @@ class BrowserApp(engine: Engine, initialUrl: String? = null) : XrApp(engine) {
         toolbar.borderColor = theme.panelBorder
         toolbar.borderWidth = 0.0012f
         toolbar.update(dt)
-        toolbar.updateWorld(identityRoot)
+        toolbar.updateWorld(parentMatrix)
 
         addressBar.fillTop = theme.raisedTop
         addressBar.fillBottom = theme.raisedBottom
@@ -253,12 +253,12 @@ class BrowserApp(engine: Engine, initialUrl: String? = null) : XrApp(engine) {
         }
         if (showKeys) {
             keyboardPanel.update(dt)
-            keyboardPanel.updateWorld(identityRoot)
+            keyboardPanel.updateWorld(parentMatrix)
         }
 
         statusLabel.pos.set(-contentWidth * 0.5f + 0.02f, -contentHeight * 0.5f + 0.012f, 0f)
         statusLabel.update(dt)
-        statusLabel.updateWorld(identityRoot)
+        statusLabel.updateWorld(parentMatrix)
 
         // history panel
         rebuildHistoryIfNeeded()
@@ -270,7 +270,7 @@ class BrowserApp(engine: Engine, initialUrl: String? = null) : XrApp(engine) {
             card.borderColor = theme.cardBorder
             card.borderWidth = 0.001f
             card.update(dt)
-            card.updateWorld(identityRoot)
+            card.updateWorld(parentMatrix)
             hy -= 0.042f
         }
     }
