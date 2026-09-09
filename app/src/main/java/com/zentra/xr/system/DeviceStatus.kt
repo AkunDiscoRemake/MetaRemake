@@ -32,7 +32,6 @@ class DeviceStatus(private val context: Context) {
         val now = Date()
         timeText = timeFormat.format(now)
         dateText = dateFormat.format(now)
-        if (nowMs - lastSample == 0L) return
         try {
             val intent = context.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
             if (intent != null) {

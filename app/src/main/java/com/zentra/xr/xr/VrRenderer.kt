@@ -553,6 +553,7 @@ class VrRenderer {
     fun translate(x: Float, y: Float, z: Float) = stack.translate(x, y, z)
     fun rotate(deg: Float, x: Float, y: Float, z: Float) = stack.rotate(deg, x, y, z)
     fun scale(s: Float) = stack.scale(s)
+    fun scale(x: Float, y: Float, z: Float) = stack.scale(x, y, z)
 
     /** Distance from the eye to the current matrix origin. */
     fun distanceToCamera(): Float = stack.distanceTo(camPos)

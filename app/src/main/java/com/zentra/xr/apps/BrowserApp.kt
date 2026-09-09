@@ -53,7 +53,6 @@ class BrowserApp(engine: Engine, initialUrl: String? = null) : XrApp(engine) {
     private var shift = false
     private val historyCards = ArrayList<Button3D>()
     private var statusTimer = 0f
-    private val parentMatrix = FloatArray(16).apply { android.opengl.Matrix.setIdentityM(this, 0) }
 
     private val rows = arrayOf(
         "qwertyuiop",

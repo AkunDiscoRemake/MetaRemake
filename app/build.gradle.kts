@@ -6,7 +6,6 @@ plugins {
 android {
     namespace = "com.zentra.xr"
     compileSdk = 35
-    ndkVersion = ""
 
     defaultConfig {
         applicationId = "com.zentra.xr"

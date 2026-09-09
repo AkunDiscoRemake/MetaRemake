@@ -39,7 +39,7 @@ interface EngineHost {
  *  sensors -> hand tracking -> filtering -> direct touch -> UI update -> stereo render
  */
 class Engine(
-    private val host: EngineHost,
+    val host: EngineHost,
     private val lifecycleOwner: LifecycleOwner
 ) : GLSurfaceView.Renderer, Choreographer.FrameCallback {
 
