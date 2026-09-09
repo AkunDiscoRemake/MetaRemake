@@ -1,0 +1,14 @@
+*.iml
+.gradle
+/local.properties
+/.idea
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+/app/build
+/app/release
+# MediaPipe model is downloaded at build time (see app/build.gradle.kts)
+/app/src/main/assets/models/*.task

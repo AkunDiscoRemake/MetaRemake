@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Zentra XR is rendered entirely by the OpenGL SBS renderer.
+         This theme only styles the tiny 2D surfaces (permission dialogs, WebView host). -->
+    <style name="Theme.ZentraXR" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:colorBackground">@android:color/black</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:alertDialogTheme">@style/Theme.ZentraXR.Dialog</item>
+    </style>
+
+    <style name="Theme.ZentraXR.Dialog" parent="android:Theme.Material.Dialog">
+        <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:colorAccent">@android:color/white</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+    </style>
+
+</resources>
