@@ -1,0 +1,177 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.9/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+Checking the license for package Android SDK Build-Tools 34 in /home/runner/android-sdk/licenses
+License for package Android SDK Build-Tools 34 accepted.
+Preparing "Install Android SDK Build-Tools 34 v.34.0.0".
+"Install Android SDK Build-Tools 34 v.34.0.0" ready.
+Installing Android SDK Build-Tools 34 in /home/runner/android-sdk/build-tools/34.0.0
+"Install Android SDK Build-Tools 34 v.34.0.0" complete.
+"Install Android SDK Build-Tools 34 v.34.0.0" finished.
+
+> Task :app:downloadHandModel
+Hand Landmarker model downloaded (7635 KB)
+
+> Task :app:preBuild
+> Task :app:preDebugBuild
+> Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :app:checkKotlinGradlePluginConfigurationErrors
+> Task :app:generateDebugBuildConfig FROM-CACHE
+> Task :app:generateDebugResValues FROM-CACHE
+> Task :app:checkDebugAarMetadata
+> Task :app:mapDebugSourceSetPaths
+> Task :app:generateDebugResources FROM-CACHE
+> Task :app:mergeDebugResources FROM-CACHE
+> Task :app:packageDebugResources FROM-CACHE
+> Task :app:parseDebugLocalResources FROM-CACHE
+> Task :app:createDebugCompatibleScreenManifests
+> Task :app:extractDeepLinksDebug FROM-CACHE
+> Task :app:processDebugMainManifest FROM-CACHE
+> Task :app:processDebugManifest FROM-CACHE
+> Task :app:processDebugManifestForPackage FROM-CACHE
+> Task :app:processDebugResources FROM-CACHE
+> Task :app:javaPreCompileDebug FROM-CACHE
+> Task :app:mergeDebugShaders
+> Task :app:compileDebugShaders NO-SOURCE
+> Task :app:generateDebugAssets UP-TO-DATE
+> Task :app:mergeDebugAssets
+> Task :app:compressDebugAssets FROM-CACHE
+> Task :app:desugarDebugFileDependencies FROM-CACHE
+> Task :app:mergeDebugJniLibFolders
+> Task :app:checkDebugDuplicateClasses
+> Task :app:mergeDebugNativeLibs
+> Task :app:mergeExtDexDebug FROM-CACHE
+> Task :app:mergeLibDexDebug FROM-CACHE
+
+> Task :app:stripDebugDebugSymbols
+Unable to strip the following libraries, packaging them as they are: libimage_processing_util_jni.so, libmediapipe_tasks_vision_jni.so, libsurface_util_jni.so.
+
+> Task :app:validateSigningDebug
+> Task :app:writeDebugAppMetadata
+> Task :app:writeDebugSigningConfigVersions
+> Task :app:preReleaseBuild
+> Task :app:mergeReleaseJniLibFolders
+> Task :app:checkReleaseDuplicateClasses
+> Task :app:buildKotlinToolingMetadata
+> Task :app:generateReleaseBuildConfig FROM-CACHE
+> Task :app:checkReleaseAarMetadata
+> Task :app:generateReleaseResValues FROM-CACHE
+> Task :app:mapReleaseSourceSetPaths
+> Task :app:generateReleaseResources FROM-CACHE
+> Task :app:mergeReleaseNativeLibs
+> Task :app:mergeReleaseResources FROM-CACHE
+> Task :app:packageReleaseResources FROM-CACHE
+> Task :app:parseReleaseLocalResources FROM-CACHE
+> Task :app:createReleaseCompatibleScreenManifests
+> Task :app:extractDeepLinksRelease FROM-CACHE
+> Task :app:processReleaseMainManifest FROM-CACHE
+> Task :app:processReleaseManifest FROM-CACHE
+> Task :app:processReleaseManifestForPackage FROM-CACHE
+> Task :app:processReleaseResources FROM-CACHE
+> Task :app:javaPreCompileRelease FROM-CACHE
+> Task :app:desugarReleaseFileDependencies FROM-CACHE
+
+> Task :app:stripReleaseDebugSymbols
+Unable to strip the following libraries, packaging them as they are: libimage_processing_util_jni.so, libmediapipe_tasks_vision_jni.so, libsurface_util_jni.so.
+
+> Task :app:mergeReleaseStartupProfile
+> Task :app:extractReleaseNativeSymbolTables FROM-CACHE
+> Task :app:mergeReleaseNativeDebugMetadata NO-SOURCE
+> Task :app:mergeExtDexRelease FROM-CACHE
+> Task :app:mergeReleaseArtProfile
+> Task :app:mergeReleaseShaders
+> Task :app:compileReleaseShaders NO-SOURCE
+> Task :app:generateReleaseAssets UP-TO-DATE
+> Task :app:mergeReleaseAssets
+> Task :app:compressReleaseAssets FROM-CACHE
+> Task :app:extractReleaseVersionControlInfo
+> Task :app:optimizeReleaseResources FROM-CACHE
+> Task :app:collectReleaseDependencies
+> Task :app:sdkReleaseDependencyData
+> Task :app:validateSigningRelease
+> Task :app:writeReleaseAppMetadata
+> Task :app:writeReleaseSigningConfigVersions
+> Task :app:compileDebugKotlin
+> Task :app:compileReleaseKotlin
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/MainActivity.kt:49:52 'FLAG_FULLSCREEN: Int' is deprecated. Deprecated in Java
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/MainActivity.kt:165:18 This declaration overrides deprecated member but not marked as deprecated itself. Please add @Deprecated annotation or suppress. See https://youtrack.jetbrains.com/issue/KT-47902 for details
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/MainActivity.kt:170:15 'onRequestPermissionsResult(Int, Array<String>, IntArray): Unit' is deprecated. This method has been deprecated in favor of using the Activity Result API
+      which brings increased type safety via an {@link ActivityResultContract} and the prebuilt
+      contracts for common intents available in
+      {@link androidx.activity.result.contract.ActivityResultContracts}, provides hooks for
+      testing, and allow receiving results in separate, testable classes independent from your
+      activity. Use
+      {@link #registerForActivityResult(ActivityResultContract, ActivityResultCallback)} passing
+      in a {@link RequestMultiplePermissions} object for the {@link ActivityResultContract} and
+      handling the result in the {@link ActivityResultCallback#onActivityResult(Object) callback}.
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/MainActivity.kt:235:26 'setter for systemUiVisibility: Int' is deprecated. Deprecated in Java
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/MainActivity.kt:236:18 'SYSTEM_UI_FLAG_IMMERSIVE_STICKY: Int' is deprecated. Deprecated in Java
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/MainActivity.kt:237:25 'SYSTEM_UI_FLAG_FULLSCREEN: Int' is deprecated. Deprecated in Java
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/MainActivity.kt:238:25 'SYSTEM_UI_FLAG_HIDE_NAVIGATION: Int' is deprecated. Deprecated in Java
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/MainActivity.kt:239:25 'SYSTEM_UI_FLAG_LAYOUT_STABLE: Int' is deprecated. Deprecated in Java
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/MainActivity.kt:240:25 'SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION: Int' is deprecated. Deprecated in Java
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/MainActivity.kt:241:25 'SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN: Int' is deprecated. Deprecated in Java
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/apps/BrowserApp.kt:126:13 Variable 'kit' is never used
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/apps/MediaApps.kt:546:13 Variable 'y' is never used
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/apps/MediaApps.kt:695:15 Variable 'index' is never used
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/browser/VrBrowser.kt:112:16 'setter for databaseEnabled: Boolean' is deprecated. Deprecated in Java
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/browser/VrBrowser.kt:141:30 This declaration overrides deprecated member but not marked as deprecated itself. Please add @Deprecated annotation or suppress. See https://youtrack.jetbrains.com/issue/KT-47902 for details
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/core/MathX.kt:294:13 Name shadowed: t
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/screens/HubScreen.kt:178:13 Variable 'h' is never used
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/screens/OnboardingScreen.kt:113:13 Variable 's' is never used
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/tracking/HandTracker.kt:170:14 'setTargetResolution(Size): ImageAnalysis.Builder' is deprecated. Deprecated in Java
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/xr/DirectTouch.kt:157:45 Parameter 'depth' is never used
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/xr/HeadTracker.kt:108:30 'getter for defaultDisplay: Display!' is deprecated. Deprecated in Java
+
+> Task :app:compileDebugKotlin
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/MainActivity.kt:49:52 'FLAG_FULLSCREEN: Int' is deprecated. Deprecated in Java
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/MainActivity.kt:165:18 This declaration overrides deprecated member but not marked as deprecated itself. Please add @Deprecated annotation or suppress. See https://youtrack.jetbrains.com/issue/KT-47902 for details
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/MainActivity.kt:170:15 'onRequestPermissionsResult(Int, Array<String>, IntArray): Unit' is deprecated. This method has been deprecated in favor of using the Activity Result API
+      which brings increased type safety via an {@link ActivityResultContract} and the prebuilt
+      contracts for common intents available in
+      {@link androidx.activity.result.contract.ActivityResultContracts}, provides hooks for
+      testing, and allow receiving results in separate, testable classes independent from your
+      activity. Use
+      {@link #registerForActivityResult(ActivityResultContract, ActivityResultCallback)} passing
+      in a {@link RequestMultiplePermissions} object for the {@link ActivityResultContract} and
+      handling the result in the {@link ActivityResultCallback#onActivityResult(Object) callback}.
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/MainActivity.kt:235:26 'setter for systemUiVisibility: Int' is deprecated. Deprecated in Java
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/MainActivity.kt:236:18 'SYSTEM_UI_FLAG_IMMERSIVE_STICKY: Int' is deprecated. Deprecated in Java
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/MainActivity.kt:237:25 'SYSTEM_UI_FLAG_FULLSCREEN: Int' is deprecated. Deprecated in Java
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/MainActivity.kt:238:25 'SYSTEM_UI_FLAG_HIDE_NAVIGATION: Int' is deprecated. Deprecated in Java
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/MainActivity.kt:239:25 'SYSTEM_UI_FLAG_LAYOUT_STABLE: Int' is deprecated. Deprecated in Java
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/MainActivity.kt:240:25 'SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION: Int' is deprecated. Deprecated in Java
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/MainActivity.kt:241:25 'SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN: Int' is deprecated. Deprecated in Java
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/apps/BrowserApp.kt:126:13 Variable 'kit' is never used
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/apps/MediaApps.kt:546:13 Variable 'y' is never used
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/apps/MediaApps.kt:695:15 Variable 'index' is never used
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/browser/VrBrowser.kt:112:16 'setter for databaseEnabled: Boolean' is deprecated. Deprecated in Java
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/browser/VrBrowser.kt:141:30 This declaration overrides deprecated member but not marked as deprecated itself. Please add @Deprecated annotation or suppress. See https://youtrack.jetbrains.com/issue/KT-47902 for details
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/core/MathX.kt:294:13 Name shadowed: t
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/screens/HubScreen.kt:178:13 Variable 'h' is never used
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/screens/OnboardingScreen.kt:113:13 Variable 's' is never used
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/tracking/HandTracker.kt:170:14 'setTargetResolution(Size): ImageAnalysis.Builder' is deprecated. Deprecated in Java
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/xr/DirectTouch.kt:157:45 Parameter 'depth' is never used
+w: file:///home/runner/work/MetaRemake/MetaRemake/app/src/main/java/com/zentra/xr/xr/HeadTracker.kt:108:30 'getter for defaultDisplay: Display!' is deprecated. Deprecated in Java
+
+> Task :app:compileDebugJavaWithJavac
+> Task :app:dexBuilderDebug
+> Task :app:mergeDebugGlobalSynthetics FROM-CACHE
+> Task :app:processDebugJavaRes
+> Task :app:compileReleaseJavaWithJavac
+> Task :app:mergeProjectDexDebug
+> Task :app:mergeDebugJavaResource
+> Task :app:dexBuilderRelease
+> Task :app:mergeReleaseGlobalSynthetics FROM-CACHE
+> Task :app:processReleaseJavaRes
+> Task :app:packageDebug
+> Task :app:mergeReleaseJavaResource
+> Task :app:createDebugApkListingFileRedirect
+> Task :app:assembleDebug
+> Task :app:mergeDexRelease
+> Task :app:compileReleaseArtProfile
+> Task :app:packageRelease
+> Task :app:createReleaseApkListingFileRedirect
+> Task :app:assembleRelease
+
+BUILD SUCCESSFUL in 1m 7s
+84 actionable tasks: 49 executed, 35 from cache

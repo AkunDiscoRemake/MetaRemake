@@ -1,0 +1,14 @@
+/tmp/build-out:
+total 28
+drwxr-xr-x  3 runner runner  4096 Sep 10 00:01 .
+drwxrwxrwt 16 root   root    4096 Sep 10 00:01 ..
+drwxr-xr-x  2 runner runner  4096 Sep 10 00:01 apk
+-rw-r--r--  1 runner runner 13887 Sep 10 00:01 gradle-build.log
+-rw-r--r--  1 runner runner     0 Sep 10 00:01 listing.txt
+
+/tmp/build-out/apk:
+total 107088
+drwxr-xr-x 2 runner runner     4096 Sep 10 00:01 .
+drwxr-xr-x 3 runner runner     4096 Sep 10 00:01 ..
+-rw-r--r-- 1 runner runner 55563077 Sep 10 00:01 app-debug.apk
+-rw-r--r-- 1 runner runner 54081830 Sep 10 00:01 app-release.apk
