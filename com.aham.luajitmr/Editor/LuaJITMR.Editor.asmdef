@@ -1,0 +1,20 @@
+{
+  "name": "LuaJITMR.Editor",
+  "rootNamespace": "LuaJITMR.Editor",
+  "references": [
+    "LuaJITMR.Runtime",
+    "Unity.RenderPipelines.Universal.Editor",
+    "Unity.XR.ARFoundation.Editor",
+    "Unity.XR.ARCore.Editor",
+    "Unity.TextMeshPro.Editor"
+  ],
+  "includePlatforms": ["Editor"],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <title>LuaJITMR — WebXR</title>
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; background: #000; overflow: hidden; font-family: system-ui, -apple-system, sans-serif; color: #eee; }
+    #canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+    #enter-xr {
+      position: absolute; bottom: 10%; left: 50%; transform: translateX(-50%);
+      padding: 14px 28px; font-size: 18px; background: linear-gradient(135deg, #7c3aed, #06b6d4);
+      color: white; border: none; border-radius: 999px; cursor: pointer; font-weight: 600;
+      box-shadow: 0 8px 32px rgba(124, 58, 237, 0.5);
+      opacity: 0; pointer-events: none; transition: opacity .25s ease;
+    }
+    #enter-xr.visible { opacity: 1; pointer-events: auto; }
+    #enter-xr:hover { transform: translateX(-50%) scale(1.05); }
+    #status { position: absolute; top: 16px; left: 16px; font-size: 14px; opacity: 0.8; }
+    #fallback-hint { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; opacity: 0.7; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div id="canvas-container"></div>
+  <div id="status">LuaJITMR WebXR</div>
+  <button id="enter-xr">Enter VR</button>
+  <div id="fallback-hint">Tap anywhere to look around.<br/>Use a cardboard viewer for VR.</div>
+
+  <script src="Build/{{{ LOADER }}}"></script>
+  <script>
+    var container = document.getElementById('canvas-container');
+    var btn = document.getElementById('enter-xr');
+    var statusEl = document.getElementById('status');
+
+    var config = {
+      dataUrl: "Build/{{{ DATA }}}",
+      frameworkUrl: "Build/{{{ FRAMEWORK }}}",
+      codeUrl: "Build/{{{ CODE }}}",
+      streamingAssetsUrl: "StreamingAssets",
+      companyName: "Aham",
+      productName: "LuaJITMR",
+      productVersion: "{{{ VERSION }}}",
+    };
+
+    var script = document.createElement("script");
+    script.src = "Build/{{{ LOADER }}}";
+    script.onload = function () {
+      createUnityInstance(container, config).then(function (unityInstance) {
+        window.unityInstance = unityInstance;
+        setupXR();
+      }).catch(function (e) {
+        statusEl.textContent = "Unity failed to load: " + e;
+      });
+    };
+    document.body.appendChild(script);
+
+    function setupXR() {
+      if (!navigator.xr) {
+        statusEl.textContent = "WebXR not supported — magic window fallback.";
+        btn.classList.add('visible');
+        btn.textContent = "Tap to look";
+        btn.onclick = function () {
+          // Request DeviceOrientation for 3DoF fallback
+          if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+            DeviceOrientationEvent.requestPermission().then(function(r){ if (r==='granted') enableMagicWindow(); });
+          } else {
+            enableMagicWindow();
+          }
+          btn.style.display = 'none';
+        };
+        return;
+      }
+      navigator.xr.isSessionSupported('immersive-vr').then(function(ok) {
+        if (ok) {
+          btn.classList.add('visible');
+          btn.textContent = 'Enter VR';
+          btn.onclick = enterXR;
+        } else {
+          navigator.xr.isSessionSupported('immersive-ar').then(function(ar){
+            if (ar) { btn.classList.add('visible'); btn.textContent = 'Enter AR'; btn.onclick = enterAR; }
+            else { statusEl.textContent = 'No immersive VR/AR available.'; enableMagicWindow(); }
+          });
+        }
+      });
+    }
+
+    function enterXR() { requestSession('immersive-vr'); }
+    function enterAR() { requestSession('immersive-ar'); }
+    function requestSession(mode) {
+      navigator.xr.requestSession(mode, { requiredFeatures: ['local-floor'], optionalFeatures: ['hand-tracking', 'depth-sensing'] })
+        .then(function(s) {
+          statusEl.textContent = 'Session active: ' + mode;
+          btn.classList.remove('visible');
+          s.addEventListener('end', function(){ btn.classList.add('visible'); });
+          // The Unity WebXR bridge inside the build will bind to this session via the jslib.
+          window.__ljmr_session = s;
+        })
+        .catch(function(e){ statusEl.textContent = 'Session failed: ' + e.message; });
+    }
+
+    function enableMagicWindow() {
+      document.getElementById('fallback-hint').style.display = 'none';
+    }
+  </script>
+</body>
+</html>

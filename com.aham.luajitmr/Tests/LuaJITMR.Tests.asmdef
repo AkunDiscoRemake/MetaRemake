@@ -1,0 +1,27 @@
+{
+  "name": "LuaJITMR.Tests",
+  "rootNamespace": "LuaJITMR.Tests",
+  "references": [
+    "LuaJITMR.Runtime",
+    "Unity.RenderPipelines.Universal.Runtime",
+    "Unity.XR.ARFoundation",
+    "Unity.Burst",
+    "Unity.Collections",
+    "Unity.Mathematics",
+    "Unity.TextMeshPro",
+    "Unity.InputSystem"
+  ],
+  "includePlatforms": ["Editor"],
+  "excludePlatforms": [],
+  "allowUnsafeCode": true,
+  "overrideReferences": true,
+  "precompiledReferences": [
+    "nunit.framework.dll",
+    "UnityEditor.TestRunner.dll",
+    "UnityEngine.TestRunner.dll"
+  ],
+  "autoReferenced": false,
+  "defineConstraints": ["UNITY_INCLUDE_TESTS"],
+  "versionDefines": [],
+  "noEngineReferences": false
+}
