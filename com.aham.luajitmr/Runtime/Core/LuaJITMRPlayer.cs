@@ -36,6 +36,13 @@ namespace LuaJITMR
 
         private Transform _head;
 
+        /// <summary>The active settings asset (defaults instance if none was assigned).</summary>
+        public static LuaJITMRSettings ActiveSettings
+        {
+            get;
+            private set;
+        }
+
         private void Awake()
         {
             // Ensure the rig stays at the root so tracking space is stable.
@@ -55,6 +62,11 @@ namespace LuaJITMR
             _head = targetCamera.transform;
 
             LuaJITMR.Initialize(settings, _head, targetCamera);
+
+            ActiveSettings = settings != null ? settings : LuaJITMRSettings.CreateDefault();
+
+            // Bring up the XR UI system (curved canvas, reticle, built-in screens)
+            UI.XRUIManager.Ensure();
 
             if (startMode == XRMode.MR) LuaJITMR.SetMode(XRMode.MR);
         }

@@ -1,3 +1,15 @@
+## [0.2.1] - 2026-09-16
+
+### Added
+- XR UI module: curved world-space canvas, glassmorphism panels, adaptive reticle with dwell progress, gaze-and-dwell input router, TMP angular-size text, procedural audio feedback (no binary assets).
+- Built-in screens: MainMenu, Settings (IPD/VR-MR/brightness/quality/haptics), TrackingLost, CameraPermission, GestureTutorial.
+- XRButton: responds to gaze + dwell, pinch, poke, controller click. 150ms ease-out scale+tint animation.
+- XRUIManager auto-creates the UI rig on startup; screens are stacked and hidden/shown with fade animation.
+
+### Fixed
+- CI release job creates GitHub releases only on user pushes (not bot pushes) with correct permissions.
+- .gitignore no longer ignores Editor/Build/ folder.
+- Various null ref guards and event-system wiring for UI.
 # Changelog
 
 All notable changes to **LuaJITMR** (`com.aham.luajitmr`) will be documented here. The format is based on

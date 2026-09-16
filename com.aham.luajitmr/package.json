@@ -1,6 +1,6 @@
 {
   "name": "com.aham.luajitmr",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "displayName": "LuaJITMR — VR/MR Cardboard",
   "description": "Turn any Android phone into a 6DoF MR headset with Cardboard viewer, passthrough via ARCore, MediaPipe hand tracking, and a WebXR runtime for the same content in the browser. Clean zero-boilerplate API: drop LuaJITMRPlayer into any scene and call LuaJITMR.SetMode(XRMode.MR).",
   "unity": "2022.3",
