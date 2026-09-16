@@ -73,22 +73,22 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Pack tgz + zip
+      - name: Pack tgz + tar.gz
         id: pack
         run: |
           set -euo pipefail
           mkdir -p dist
           cd "${PACKAGE_DIR}"
-          TGZ=$(npm pack --pack-destination .. 2>&1 | tail -n1)
+          TGZ=$(npm pack --pack-destination .. 2>&1 | grep -E '\.tgz$' | tail -n1 | tr -d '\r\n')
           cd ..
           cp "${TGZ}" dist/
           V=$(node -p "require('./${PACKAGE_DIR}/package.json').version")
-          ZIP="dist/com.aham.luajitmr-${V}.zip"
-          # Use node's built-in archiver via tar (zip is not always available on GHA ubuntu-latest minimal runners)
-          tar -czf "${ZIP}" -C "${PACKAGE_DIR}" Runtime Editor Plugins package.json
+          TGZ_BN=$(basename "${TGZ}")
+          TARGZ="com.aham.luajitmr-${V}.tar.gz"
+          tar -czf "dist/${TARGZ}" -C "${PACKAGE_DIR}" Runtime Editor Plugins package.json
           ls -la dist/
-          echo "tgz=${TGZ}" >> "$GITHUB_OUTPUT"
-          echo "zip=$(basename ${ZIP})" >> "$GITHUB_OUTPUT"
+          echo "tgz=${TGZ_BN}" >> "$GITHUB_OUTPUT"
+          echo "tar=${TARGZ}" >> "$GITHUB_OUTPUT"
           echo "version=${V}" >> "$GITHUB_OUTPUT"
       - uses: actions/upload-artifact@v4
         with:
@@ -117,7 +117,7 @@ jobs:
             echo ""
             echo "### Download"
             echo "- **com.aham.luajitmr-${VER}.tgz** -- install via Package Manager > + > Add package from tarball"
-            echo "- **com.aham.luajitmr-${VER}.zip** -- extract into your project's Packages/"
+            echo "- **com.aham.luajitmr-${VER}.tar.gz** -- extract into your project's Packages/"
             echo ""
             echo "### Git URL"
             echo "https://github.com/AkunDiscoRemake/MetaRemake.git?path=com.aham.luajitmr#v${VER}"
