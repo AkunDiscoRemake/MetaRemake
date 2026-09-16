@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- LuaJITMR Android manifest additions. Merged into the app manifest by Unity's Gradle build. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.aham.luajitmr.app">
+
+    <!-- Required: rear-facing camera for passthrough + hand tracking + ARCore. -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <!-- Vibration for haptic UI feedback. -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- Keep screen on during VR sessions. -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- Internet access is optional but useful for WebXR deployment tests on Android browsers. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- ARCore is optional: the app falls back to 3DoF on unsupported devices. -->
+    <uses-feature android:name="android.hardware.camera.ar" android:required="false" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:glEsVersion="0x00030000" android:required="true" />
+    <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="false" />
+    <uses-feature android:name="android.hardware.sensor.gyroscope" android:required="false" />
+
+    <application>
+        <!-- Tells the Play Store / system that ARCore is optional. -->
+        <meta-data android:name="com.google.ar.core" android:value="optional" />
+    </application>
+</manifest>

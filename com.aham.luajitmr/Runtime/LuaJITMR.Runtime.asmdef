@@ -1,0 +1,34 @@
+{
+  "name": "LuaJITMR.Runtime",
+  "rootNamespace": "LuaJITMR",
+  "references": [
+    "Unity.RenderPipelines.Universal.Runtime",
+    "Unity.XR.ARFoundation",
+    "Unity.XR.ARSubsystems",
+    "Unity.TextMeshPro",
+    "Unity.Burst",
+    "Unity.Collections",
+    "Unity.Mathematics",
+    "Unity.InputSystem"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": true,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [
+    {
+      "name": "com.unity.burst",
+      "expression": "",
+      "define": "LUAJITMR_BURST"
+    },
+    {
+      "name": "com.unity.xr.arfoundation",
+      "expression": "5.0.0",
+      "define": "LUAJITMR_ARFOUNDATION_5"
+    }
+  ],
+  "noEngineReferences": false
+}

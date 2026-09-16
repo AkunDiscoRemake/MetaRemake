@@ -1,0 +1,136 @@
+name: LuaJITMR CI
+
+on:
+  push:
+    branches:
+      - arena/01a0a7e7-metaremake
+      - main
+    paths-ignore:
+      - 'Documentation~/**'
+      - 'README.md'
+      - 'ARCHITECTURE.md'
+      - '.gitignore'
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  PACKAGE_DIR: com.aham.luajitmr
+
+jobs:
+  validate:
+    name: Validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Validate JSON
+        run: |
+          set -e
+          for f in \
+            "${PACKAGE_DIR}/package.json" \
+            "${PACKAGE_DIR}/Runtime/LuaJITMR.Runtime.asmdef" \
+            "${PACKAGE_DIR}/Editor/LuaJITMR.Editor.asmdef" \
+            "${PACKAGE_DIR}/Tests/LuaJITMR.Tests.asmdef"; do
+            echo "validating $f"
+            node -e "JSON.parse(require('fs').readFileSync(process.argv[1],'utf8')); console.log('  OK');" "$f"
+          done
+      - name: Check required files
+        run: |
+          set -e
+          for f in \
+            "Runtime/Core/LuaJITMR.cs" \
+            "Runtime/Core/LuaJITMRSettings.cs" \
+            "Runtime/Core/LuaJITMRPlayer.cs" \
+            "Plugins/WebGL/luajitmr_webxr.jslib" \
+            "Plugins/Android/AndroidManifest.xml" \
+            "Editor/Settings/LuaJITMRSettingsProvider.cs" \
+            "Editor/Build/AndroidBuildValidator.cs" \
+            "Editor/Build/WebGLBuildValidator.cs" \
+            "Editor/Wizard/SetupWizard.cs" \
+            "Samples~/06_GorillaTag/Scripts/GorillaPlayer.cs" \
+            "Samples~/07_BeatSaber/Scripts/BeatSaberGame.cs"; do
+            P="${PACKAGE_DIR}/$f"
+            if [ -f "$P" ]; then echo "  OK  $f"; else echo "  MISS $f"; exit 1; fi
+          done
+      - name: Read version
+        id: ver
+        run: |
+          V=$(node -p "require('./${PACKAGE_DIR}/package.json').version")
+          echo "version=${V}" >> "$GITHUB_OUTPUT"
+          echo "VERSION=${V}" >> "$GITHUB_ENV"
+          echo "Version: ${V}"
+
+  pack:
+    name: Pack package
+    runs-on: ubuntu-latest
+    needs: validate
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Pack tgz + zip
+        id: pack
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          cd "${PACKAGE_DIR}"
+          TGZ=$(npm pack --pack-destination .. 2>&1 | tail -n1)
+          cd ..
+          cp "${TGZ}" dist/
+          V=$(node -p "require('./${PACKAGE_DIR}/package.json').version")
+          ZIP="dist/com.aham.luajitmr-${V}.zip"
+          # Use node's built-in archiver via tar (zip is not always available on GHA ubuntu-latest minimal runners)
+          tar -czf "${ZIP}" -C "${PACKAGE_DIR}" Runtime Editor Plugins package.json
+          ls -la dist/
+          echo "tgz=${TGZ}" >> "$GITHUB_OUTPUT"
+          echo "zip=$(basename ${ZIP})" >> "$GITHUB_OUTPUT"
+          echo "version=${V}" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: LuaJITMR-${{ steps.pack.outputs.version }}
+          path: dist/*
+          retention-days: 90
+
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    needs: [pack, validate]
+    if: github.event_name == 'push'
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: LuaJITMR-${{ needs.pack.outputs.version }}
+          path: release-files/
+      - name: Build release notes
+        run: |
+          VER="${{ needs.pack.outputs.version }}"
+          {
+            echo "## LuaJITMR v${VER}"
+            echo ""
+            echo "### Download"
+            echo "- **com.aham.luajitmr-${VER}.tgz** -- install via Package Manager > + > Add package from tarball"
+            echo "- **com.aham.luajitmr-${VER}.zip** -- extract into your project's Packages/"
+            echo ""
+            echo "### Git URL"
+            echo "https://github.com/AkunDiscoRemake/MetaRemake.git?path=com.aham.luajitmr#v${VER}"
+            echo ""
+            echo "See Documentation~/CHANGELOG.md for details."
+          } > RELEASE_NOTES.md
+          ls -la release-files/
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ needs.pack.outputs.version }}
+          name: LuaJITMR v${{ needs.pack.outputs.version }}
+          body_path: RELEASE_NOTES.md
+          files: release-files/*
+          prerelease: true
+          target_commitish: arena/01a0a7e7-metaremake
